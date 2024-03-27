@@ -25,6 +25,9 @@ const { EErrors } = require('./services/enum.js');
 const CustomError = require('./services/CustomError.js');
 
 dotenv.config();
+const { addLogger } = require("./utils/logger.js");
+
+
 
 const fileStorage = fileStore(session);
 const app = express();
@@ -33,6 +36,7 @@ const server = http.createServer(app);
 const socketServer = socketIO(server);
 const productManager = new ProductManager();
 app.use(cookieParser());
+app.use(addLogger);
 
 
 const enviroment = async() => {
@@ -97,6 +101,17 @@ app.get("*", (req, res) => {
     message: "La ruta que buscas no existe",
     code: EErrors.ROUTING_ERROR,
     });
+});
+
+// Ruta para probar todos los logs
+app.get("/loggerTest", (req, res) => {
+    req.logger.info("Este es un mensaje de información");
+    req.logger.warn("Este es un mensaje de advertencia");
+    req.logger.error("Este es un mensaje de error");
+    req.logger.verbose("Este es un mensaje verbose");
+    req.logger.debug("Este es un mensaje debug");
+    req.logger.silly("Este es un mensaje silly");
+    res.send("Logs probados");
 });
 
 socketServer.on('connection', (socket) => {
