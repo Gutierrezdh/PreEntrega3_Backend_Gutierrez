@@ -40,7 +40,7 @@ const socketServer = socketIO(server);
 const productManager = new ProductManager();
 const swaggerOptions = {
     definition: {
-        openapi: "3.0.1",,
+        openapi: "3.0.1",
         info: {
             title: "E-commerce API",
             version: "1.0.0",
