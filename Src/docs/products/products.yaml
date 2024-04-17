@@ -1,0 +1,214 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos.
+      tags:
+        - Productos
+      parameters:
+        - name: limit
+          in: query
+          description: Número máximo de productos por página.
+          schema:
+            type: integer
+            default: 10
+        - name: page
+          in: query
+          description: Número de página a recuperar.
+          schema:
+            type: integer
+            default: 1
+        - name: query
+          in: query
+          description: Búsqueda por título o descripción.
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Ordenar resultados ascendente (asc) o descendente (desc) según el precio.
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        "200":
+          description: Productos obtenidos satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+                  totalPages:
+                    type: integer
+                  prevPage:
+                    type: integer
+                  nextPage:
+                    type: integer
+                  page:
+                    type: integer
+                  hasPrevPage:
+                    type: boolean
+                  hasNextPage:
+                    type: boolean
+                  prevLink:
+                    type: string
+                  nextLink:
+                    type: string
+        "500":
+          description: Error interno del servidor.
+    post:
+      summary: Agrega un nuevo producto.
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/AddProduct"
+      responses:
+        "201":
+          description: Producto agregado satisfactoriamente.
+        "500":
+          description: Error interno del servidor.
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto por su ID.
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto a obtener.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Producto obtenido satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza un producto.
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto a actualizar.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Producto actualizado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina un producto.
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto a eliminar.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Producto eliminado satisfactoriamente.
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID del producto.
+        title:
+          type: string
+          description: Título del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        thumbnail:
+          type: string
+          description: URL de la miniatura del producto.
+        code:
+          type: string
+          description: Código del producto.
+        stock:
+          type: integer
+          description: Stock del producto.
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Estado del error.
+        message:
+          type: string
+          description: Descripción del error.
+        code:
+          type: string
+          description: Código del error.
+
+  requestBodies:
+    AddProduct:
+      description: Datos para agregar un nuevo producto.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Título del producto.
+              description:
+                type: string
+                description: Descripción del producto.
+              price:
+                type: number
+                description: Precio del producto.
+              thumbnail:
+                type: string
+                description: URL de la miniatura del producto.
+              code:
+                type: string
+                description: Código del producto.
+              stock:
+                type: integer
+                description: Stock del producto.

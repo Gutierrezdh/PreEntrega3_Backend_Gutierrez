@@ -1,0 +1,157 @@
+paths:
+  /api/carts:
+    post:
+      summary: Crea un nuevo carrito.
+      tags:
+        - Carritos
+      responses:
+        "201":
+          description: Carrito creado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    $ref: "#/components/schemas/Cart"
+        "500":
+          description: Error interno del servidor.
+    get:
+      summary: Obtiene un carrito por su ID.
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito a obtener.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Carrito obtenido satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "404":
+          description: Carrito no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza un carrito.
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito a actualizar.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cart"
+      responses:
+        "200":
+          description: Carrito actualizado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "404":
+          description: Carrito no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina un carrito.
+      tags:
+        - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito a eliminar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Carrito eliminado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "404":
+          description: Carrito no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del carrito.
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                description: ID del producto.
+              quantity:
+                type: integer
+                description: Cantidad del producto en el carrito.
+      example:
+        _id: "609f4e735d2a9e001f16b8fa"
+        products:
+          - product: "609f4e735d2a9e001f16b8fb"
+            quantity: 2
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Estado del error.
+          example: error
+        payload:
+          type: string
+          description: Descripción del error.
+          example: Carrito no encontrado
+  requestBodies:
+    createCart:
+      description: Datos para crear un nuevo carrito.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties: {}
+    updateCart:
+      description: Datos para actualizar un carrito existente.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Cart"

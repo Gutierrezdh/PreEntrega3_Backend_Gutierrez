@@ -23,6 +23,9 @@ const COOKIESECRET = process.env.COOKIESECRET;
 const errorHandler = require('./middlewares/errorHandler/index.js');
 const { EErrors } = require('./services/enum.js');
 const CustomError = require('./services/CustomError.js');
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUIExpress = require("swagger-ui-express");
+
 
 dotenv.config();
 const { addLogger } = require("./utils/logger.js");
@@ -35,6 +38,24 @@ const PORT = 8080;
 const server = http.createServer(app);
 const socketServer = socketIO(server);
 const productManager = new ProductManager();
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.1",,
+        info: {
+            title: "E-commerce API",
+            version: "1.0.0",
+            description: "Api de E-Commerce CoderHouse",
+            contact: {
+                name: "CoderHouse"
+            },
+            servers: [
+                "http://localhost:8080",
+            ]
+        }
+    },
+    apis: ['${__dirName}/docs/**/*.yaml']
+}
+const specs = swaggerJSDoc(swaggerOptions);
 app.use(cookieParser());
 app.use(addLogger);
 
@@ -92,6 +113,9 @@ app.use('/mockingproducts', mockingProductsRouter);
 app.use('/', sessionRouter);
 app.use('/login', loginRouter);
 app.use('/signup', signupRouter);
+
+//api swagger
+app.use('/apidocs', swaggerUIExpress.serve, swaggerUIExpress.setup(specs));
 
 //Configuro error a las demas rutas
 app.get("*", (req, res) => {
